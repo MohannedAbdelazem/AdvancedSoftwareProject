@@ -16,24 +16,38 @@ import jakarta.persistence.Id;
 
 @Entity
 public class Quiz {
-    @Id
-    @GeneratedValue
-    private int QuizID;
-    private int QuestionListID;
-    private int mark;
-    public int getQuizID() {
-        return QuizID;
-    }
-    public void setQuestionListID(int QuestionListID){
-        this.QuestionListID = QuestionListID;
-    }
-    public int getQuestionListID() {
-        return QuestionListID;
-    }
-    public void setMark(int mark) {
-        this.mark = mark;
-    }
-    public int getMark() {
-        return mark;
-    }
+	@Id
+	@GeneratedValue
+	private int QuizID;
+	private String QuizName;
+	private int QuestionListID;
+	private int mark;
+
+	public int getQuizID() {
+		return QuizID;
+	}
+
+	public String getQuizName() {
+		return QuizName;
+	}
+
+	public void setQuizName(String quizName) {
+		this.QuizName = quizName;
+	}
+
+	public void setQuestionListID(int QuestionListID) {
+		this.QuestionListID = QuestionListID;
+	}
+
+	public int getQuestionListID() {
+		return QuestionListID;
+	}
+
+	public void setMark(int mark) {
+		this.mark = mark;
+	}
+
+	public int getMark() {
+		return mark;
+	}
 }
