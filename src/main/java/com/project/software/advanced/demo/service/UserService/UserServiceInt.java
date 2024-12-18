@@ -8,6 +8,8 @@ import com.project.software.advanced.demo.model.User.User;
 public interface UserServiceInt {
 	User saveUser(User user);
 
+	User getUserById(int userID);
+
 	List<User> fetchUsers();
 
 	boolean authUser(String username, String passHash);

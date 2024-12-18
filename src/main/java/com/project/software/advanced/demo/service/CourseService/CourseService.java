@@ -17,6 +17,15 @@ public class CourseService implements CourseServiceInt {
 	private CourseRepository courseRepository;
 
 	@Override
+	public Course getCourseById(int courseID) {
+		Optional<Course> course = courseRepository.findById(courseID);
+		if (course.isPresent()) {
+			return course.get();
+		}
+		return null;
+	}
+
+	@Override
 	public Course saveCourse(Course course) {
 		return courseRepository.save(course);
 	};

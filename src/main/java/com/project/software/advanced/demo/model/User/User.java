@@ -5,80 +5,127 @@
 
 package com.project.software.advanced.demo.model.User;
 
+import java.util.List;
+import java.util.Collection;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  *
  * @author Mohanned
  */
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "app_user")
-public class User {
-    @Id
-    @GeneratedValue
-    private int userID;
+public class User implements UserDetails {
+	@Id
+	@GeneratedValue
+	private int userID;
 
-    private String name;
+	private String name;
 
-    private String email;
+	@Column(unique = true, nullable = false)
+	private String email;
 
-    private String password;
+	private String password;
 
-    private String role;
+	@Enumerated(EnumType.STRING)
+	private Role role;
 
-    private int CourseListID;
+	private int CourseListID;
 
+	public User(String name, String email, String password, String role, int CourseListID) {
+		this.name = name;
+		this.email = email;
+		this.password = password;
+		this.CourseListID = CourseListID;
+		this.role = Role.valueOf(role.toUpperCase());
+	}
 
-    public int getCourseListID() {
-        return CourseListID;
-    }
+	public User(String name, String email, String password, Role role, int CourseListID) {
+		this.name = name;
+		this.email = email;
+		this.password = password;
+		this.CourseListID = CourseListID;
+		this.role = role;
+	}
 
-    public void setCourseListID(int courseListID) {
-        CourseListID = courseListID;
-    }
+	public User() {
+	}
 
-    public String getName() {
-        return name;
-    }
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return List.of(new SimpleGrantedAuthority(role.name()));
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public int getCourseListID() {
+		return CourseListID;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public void setCourseListID(int courseListID) {
+		CourseListID = courseListID;
+	}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getPassword() {
-        return password;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+	public String getUsername() {
+		return email;
+	}
 
-    public String getRole() {
-        return role;
-    }
+	public String getEmail() {
+		return email;
+	}
 
-    public void setRole(String role) {
-        this.role = role;
-    }
-     @Override
-    public String toString() {
-        return "User{" +
-                "userID=" + userID +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", role=" + role +
-                '}';
-    }
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
+	@Override
+	public String toString() {
+		return "User{" +
+				"userID=" + userID +
+				", name='" + name + '\'' +
+				", email='" + email + '\'' +
+				", role=" + role +
+				'}';
+	}
 }

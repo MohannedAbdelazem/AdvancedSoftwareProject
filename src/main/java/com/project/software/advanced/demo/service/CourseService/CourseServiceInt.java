@@ -6,6 +6,9 @@ import java.util.List;
 import com.project.software.advanced.demo.model.Course.Course;
 
 public interface CourseServiceInt {
+
+	Course getCourseById(int courseID);
+
 	Course saveCourse(Course course);
 
 	List<Course> fetchCourses();

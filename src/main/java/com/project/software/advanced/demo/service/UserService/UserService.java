@@ -16,12 +16,26 @@ import com.project.software.advanced.demo.model.User.UserRepository;
 public class UserService implements UserServiceInt {
 	@Autowired
 	private UserRepository userRepository;
-
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 
 	@Override
+	public User getUserById(int userID) {
+		Optional<User> user = userRepository.findById(userID);
+		if (user.isPresent()) {
+			return user.get();
+		}
+		return null;
+	}
+
+	@Override
 	public User saveUser(User user) {
+		if (user.getPassword() == null || user.getPassword().length() < 8) {
+			throw new IllegalArgumentException("Password must be at least 8 characters long");
+		}
+		String passHash = passwordEncoder.encode(user.getPassword());
+		
+		user.setPassword(passHash);
 		return userRepository.save(user);
 	};
 
@@ -49,8 +63,8 @@ public class UserService implements UserServiceInt {
 	}
 
 	@Override
-	public boolean authUser(String username, String password) {
-		Optional<User> userOptional = userRepository.findByName(username);
+	public boolean authUser(String email, String password) {
+		Optional<User> userOptional = userRepository.findByEmail(email);
 		if (!userOptional.isPresent()) {
 			return false;
 		}
