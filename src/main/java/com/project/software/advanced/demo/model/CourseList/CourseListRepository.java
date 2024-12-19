@@ -14,5 +14,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface CourseListRepository extends CrudRepository<CourseList, Integer>{
-
+    // Optional<CourseList> findByCourseListIDAndCourseID(int courseListID, int courseID);
 }

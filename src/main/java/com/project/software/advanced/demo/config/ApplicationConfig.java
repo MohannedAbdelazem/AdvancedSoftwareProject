@@ -22,10 +22,10 @@ public class ApplicationConfig {
 
 	private final UserRepository repository;
 
-	@Autowired
-	public ApplicationConfig(UserRepository repository) {
-		this.repository = repository;
-	}
+	// @Autowired
+	// public ApplicationConfig(UserRepository repository) {
+	// 	this.repository = repository;
+	// }
 
 	@Bean
 	public UserDetailsService userDetailsService() {

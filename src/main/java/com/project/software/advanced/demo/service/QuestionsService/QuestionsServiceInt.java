@@ -7,10 +7,7 @@ package com.project.software.advanced.demo.service.QuestionsService;
 import java.util.List;
 
 import com.project.software.advanced.demo.model.Questions.Questions;
-/**
- *
- * @author Mohanned
- */
+
 public interface QuestionsServiceInt {
     Questions saveQuestion(Questions question);
     List<Questions> fetchQuestionList();

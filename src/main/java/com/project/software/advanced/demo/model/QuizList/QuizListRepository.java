@@ -15,5 +15,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface QuizListRepository extends CrudRepository<QuizList, Integer>{
+    // Optional<QuizList> findByQuizListIDAndQuizID(int quizListID, int quizID);
 
 }
