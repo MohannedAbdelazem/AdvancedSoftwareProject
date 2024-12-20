@@ -18,25 +18,27 @@ import lombok.RequiredArgsConstructor;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-	private final JwtAuthFilter jwtAuthFilter;
+    private final JwtAuthFilter jwtAuthFilter;
 
-	public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
-		this.jwtAuthFilter = jwtAuthFilter;
-	}
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
+        this.jwtAuthFilter = jwtAuthFilter;
+    }
+    // .antMatchers("/admin/**").hasRole("ADMIN")
+    // .antMatchers("/student/**").hasRole("STUDENT")
 
-	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf()
-				.disable()
-				.headers().frameOptions().sameOrigin().and()
-				.authorizeRequests()
-				.requestMatchers("/api/auth/**", "/h2-console/**","/**").permitAll()
-				.anyRequest()
-				.authenticated()
-				.and()
-				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf()
+                .disable()
+                .headers().frameOptions().sameOrigin().and()
+                .authorizeRequests()
+                .requestMatchers("/api/auth/**", "/h2-console/**", "/**").permitAll()
+                .anyRequest()
+                .authenticated()
+                .and()
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-		return http.build();
-	}
+        return http.build();
+    }
 
 }

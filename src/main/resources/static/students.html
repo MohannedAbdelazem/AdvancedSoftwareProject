@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - View Students</title>
+    <!-- <script src=""></script> -->
+    <style>
+        /* Basic styling for the page */
+        .container {
+            padding: 20px;
+            max-width: 1000px;
+            margin: auto;
+            background-color: #fff;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        button {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .delete-btn {
+            background-color: red;
+        }
+
+        .delete-btn:hover {
+            background-color: darkred;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Students List</h1>
+        <p>As an admin, you can view and manage students.</p>
+
+        <!-- Students Table -->
+        <table id="students-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Table rows will be inserted here dynamically -->
+            </tbody>
+        </table>
+
+        <button onclick="logout()">Log Out</button>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            // Check if the user is logged in as an Admin
+            const role = localStorage.getItem("role");
+            if (role !== "ADMIN") {
+                alert("You must be logged in as an Admin to view this page.");
+                window.location.href = "/home";  // Redirect to login if the role is not admin
+                return;
+            }
+
+            // Fetch the list of students from the server
+            try {
+                const response = await fetch("/api/user/students", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                if (response.ok) {
+                    const students = await response.json();
+                    populateStudentsTable(students);
+                } else {
+                    alert("Failed to load students.");
+                }
+            } catch (error) {
+                console.error("Error fetching students:", error);
+                alert("An error occurred while fetching student data.");
+            }
+        });
+
+        // Function to populate the students table
+        function populateStudentsTable(students) {
+            const tableBody = document.getElementById("students-table").getElementsByTagName('tbody')[0];
+            tableBody.innerHTML = ""; // Clear the table before adding new rows
+            if (students.length === 0) {
+                const row = tableBody.insertRow();
+                row.innerHTML = "<td colspan='4'>No students found.</td>";
+            } else {
+            students.forEach(student => {
+                const row = tableBody.insertRow();
+                row.innerHTML = `
+                    <td>${student.name}</td>
+                    <td>${student.email}</td>
+                    <td>${student.role}</td>
+                    <td>
+                        <button onclick="viewStudent('${student.userID}')">View</button>
+                        <button onclick="editStudent('${student.userID}', this)">Edit</button>
+                        <button class="delete-btn" onclick="deleteStudent('${student.userID}')">Delete</button>
+                    </td>
+                `;
+            });
+        }}
+
+         // View student details
+         async function viewStudent(studentId) {
+            try {
+                const response = await fetch(`/api/user/${studentId}`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("Failed to load student:", errorData);
+                    alert("Failed to load student details. Error: " + errorData.message);
+                    return;
+                }
+
+                const student = await response.json();
+                alert(`Student Details: \nName: ${student.name}\nEmail: ${student.email}\nRole: ${student.role}`);
+            } catch (error) {
+                console.error("Error viewing student:", error);
+                alert("An unexpected error occurred while fetching student data.");
+            }
+        }
+
+        // Edit student details
+        async function editStudent(studentId, button) {
+            const row = button.closest('tr'); // Get the row of the clicked button
+            const currentName = row.querySelector("td:nth-child(1)").textContent;  // Get the name
+            const currentEmail = row.querySelector("td:nth-child(2)").textContent;  // Get the email
+            const currentRole = row.querySelector("td:nth-child(3)").textContent;  // Get the role
+
+            // Show prompts to edit name, email, and role
+            const newName = prompt("Enter new name:", currentName);
+            const newEmail = prompt("Enter new email:", currentEmail);
+            const newRole = prompt("Enter new role (STUDENT/INSTRUCTOR/ADMIN):", currentRole);
+
+            if (!newName || !newEmail || !newRole) {
+                alert("Please fill all fields!");
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/user/${studentId}`, {
+                    method: "PUT",
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        name: newName,
+                        email: newEmail,
+                        role: newRole
+                    })
+                });
+
+                // Log the response to see what the server returns
+                const responseText = await response.text();
+                console.log("Response from server:", responseText); // Debugging the raw response
+
+                // Try parsing the response as JSON
+                let responseData = {};
+                try {
+                    responseData = JSON.parse(responseText);
+                } catch (error) {
+                    console.error("Failed to parse response as JSON:", error);
+                }
+
+                if (!response.ok) {
+                    // If not ok, show the error message from the server
+                    alert("Failed to edit student. Error: " + responseData.message || "Unknown error");
+                    return;
+                }
+
+                alert("Student updated successfully!");
+                location.reload();  // Reload the page to fetch updated data
+            } catch (error) {
+                console.error("Error editing student:", error);
+                alert("An unexpected error occurred while updating student data.");
+            }
+        }
+
+        // Delete student
+        async function deleteStudent(studentId) {
+            const confirmation = confirm("Are you sure you want to delete this student?");
+            if (!confirmation) return;
+
+            try {
+                const response = await fetch(`/api/user/${studentId}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("Failed to delete student:", errorData);
+                    alert("Failed to delete student. Error: " + errorData.message);
+                    return;
+                }
+
+                alert("Student deleted successfully!");
+                location.reload();  // Reload the page to fetch updated data
+            } catch (error) {
+                console.error("Error deleting student:", error);
+                alert("An unexpected error occurred while deleting student.");
+            }
+        }
+
+        // Log Out function
+        function logout() {
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("role");
+            window.location.href = "/home";  // Redirect to the login page
+        }
+    </script>
+
+</body>
+</html>

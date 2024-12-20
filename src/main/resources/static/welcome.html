@@ -1,8 +1,100 @@
-<html>
-    <head>
-        <title>Nice</title>
-    </head>
-    <body>
-        <h1>It Worked</h1>
-    </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <script src="js/welcome.js"></script>
+    <style>
+        /* Basic styling for the navigation */
+        .nav {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+        .nav li {
+            padding: 10px;
+            background-color: #4CAF50;
+            margin: 5px 0;
+            color: white;
+            cursor: pointer;
+        }
+        .nav li:hover {
+            background-color: #45a049;
+        }
+
+        /* Simple container styling */
+        .container {
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+            background-color: #fff;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Welcome to the Dashboard</h1>
+        <p>Here is your navigation based on your role:</p>
+
+        <!-- Navigation will be populated here -->
+        <ul id="nav-list" class="nav"></ul>
+        
+        <!-- Log Out Button -->
+        <button onclick="logout()">Log Out</button>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Get the role from localStorage
+            const role = localStorage.getItem("role");
+
+            // Get the navigation container
+            const navList = document.getElementById("nav-list");
+
+            // Show different navigation based on role
+            if (role === "ADMIN") {
+                navList.innerHTML = `
+                    <li>Create Users</li>
+                    <li>Manage Courses</li>
+                    <li>System Settings</li>
+                    <li><a href="/students">View All Students</a></li>
+                    <li><a href="/instructors">Manage Instructors</a></li>
+
+                `;
+            } else if (role === "INSTRUCTOR") {
+                navList.innerHTML = `
+                    <li>Create Courses</li>
+                    <li>Manage Course Content</li>
+                    <li>Add Assignments</li>
+                    <li>Add Quizzes</li>
+                    <li>Grade Students</li>
+                    <li>Remove Students from Courses</li>
+                `;
+            } else if (role === "STUDENT") {
+                navList.innerHTML = `
+                    <li>Enroll in Courses</li>
+                    <li>Access Course Materials</li>
+                    <li>Take Quizzes</li>
+                    <li>Hand in Assignments</li>
+                    <li>View Grades</li>
+                `;
+            } else {
+                navList.innerHTML = `<li>You do not have access to the dashboard.</li>`;
+            }
+        });
+
+        // Log Out function to clear the localStorage and redirect
+        function logout() {
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("role");
+            window.location.href = "/home";  // Redirect to the login page
+        }
+    </script>
+
+</body>
 </html>

@@ -15,20 +15,30 @@ import com.project.software.advanced.demo.service.AuthService.AuthService;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-	private AuthService service;
 
-	@Autowired
-	public AuthController(AuthService service) {
-		this.service = service;
-	}
+    private AuthService service;
 
-	@PostMapping("/register")
-	public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
-		return ResponseEntity.ok(service.register(request));
-	}
+    @Autowired
+    public AuthController(AuthService service) {
+        this.service = service;
+    }
 
-	@PostMapping("/login")
-	public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-		return ResponseEntity.ok(service.login(request));
-	}
+    @PostMapping("/register")
+    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
+        return ResponseEntity.ok(service.register(request));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+        return ResponseEntity.ok(service.login(request));
+    }
+    // @PostMapping("/login")
+    // public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+    //     try {
+    //         AuthResponse authResponse = service.login(request);
+    //         return ResponseEntity.ok(authResponse);
+    //     } catch (Exception e) {
+    //         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponse("Invalid email or password"));
+    //     }
+    // }
 }

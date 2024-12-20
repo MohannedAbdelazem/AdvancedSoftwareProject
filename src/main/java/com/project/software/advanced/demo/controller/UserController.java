@@ -19,46 +19,58 @@ import com.project.software.advanced.demo.service.UserService.UserService;
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
-	private final UserService service;
 
-	@Autowired
-	public UserController(UserService service) {
-		this.service = service;
-	}
+    private final UserService service;
 
-	@GetMapping("")
-	public ResponseEntity<List<User>> getUsers() {
-		List<User> users = service.fetchUsers();
-		return ResponseEntity.ok(users);
-	}
+    @Autowired
+    public UserController(UserService service) {
+        this.service = service;
+    }
 
-	@GetMapping("/{id}")
-	public ResponseEntity<?> getUserById(@PathVariable("id") int userID) {
-		User user = service.getUserById(userID);
-		if (user == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: User not found");
-		}
-		return ResponseEntity.ok(user);
-	}
-	@PutMapping("/{id}")
-	public ResponseEntity<?> updateUser(@PathVariable("id") int userID, @RequestBody User newUser){
+    @GetMapping("")
+    public ResponseEntity<List<User>> getUsers() {
+        List<User> users = service.fetchUsers();
+        return ResponseEntity.ok(users);
+    }
 
-		User user =	service.updateUser(newUser, userID);
-		if (user == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: User not found");
-		}
-		return ResponseEntity.ok(user);
-	}
+    @GetMapping("/students")
+    public ResponseEntity<List<User>> getAllStudentsByRole() {
+        // This method should return all users with the role "STUDENT"
+        return ResponseEntity.ok(service.getUsersByRole("STUDENT"));
+    }
 
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deleteUser(@PathVariable("id") int userID){
-		
-		service.deleteUser(userID);
+    @GetMapping("/instructors")
+    public List<User> getAllInstructorsByRole() {
+        return service.getUsersByRole("INSTRUCTOR");
+    }
 
-		service.deleteUser(userID);
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable("id") int userID) {
+        User user = service.getUserById(userID);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: User not found");
+        }
+        return ResponseEntity.ok(user);
+    }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable("id") int userID, @RequestBody User newUser) {
 
-		return ResponseEntity.noContent().build();
-	}
+        User user = service.updateUser(newUser, userID);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: User not found");
+        }
+        return ResponseEntity.ok(user);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") int userID) {
+
+        service.deleteUser(userID);
+
+        service.deleteUser(userID);
+
+        return ResponseEntity.noContent().build();
+    }
 
 }

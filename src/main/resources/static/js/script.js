@@ -12,24 +12,10 @@ document.addEventListener("DOMContentLoaded", () => {
             role: document.querySelector("select[name='RoleSelection']").value,
             CourseListID: -1
         };
-/*
-private int userID;
 
-	private String name;
-
-	@Column(unique = true, nullable = false)
-	private String email;
-
-	private String password;
-
-	@Enumerated(EnumType.STRING)
-	private Role role;
-
-	private int CourseListID;
-*/
         try {
-            // Send a POST request to "/Users"
-            const response = await fetch("/Users", {
+            // Send a POST request to "/api/user"
+            const response = await fetch("/api/auth/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -37,16 +23,42 @@ private int userID;
                 body: JSON.stringify(formData),
             });
 
+            // Check if registration is successful
             if (response.ok) {
-                // Redirect to welcome.html
-                window.location.href = "../welcome.html";
+                // Registration successful, redirect to welcome page
+                const data = await response.json();
+                if (data.token) {
+                const token = data.token;
+                const decodedToken = JSON.parse(atob(token.split('.')[1]));
+                const role = decodedToken.role;
+                // Store the token in localStorage or sessionStorage
+                localStorage.setItem("authToken", token);
+                localStorage.setItem("role", role);
+                window.location.href = "../welcome";}
             } else {
-                // Handle errors
-                alert("Failed to sign up. Please try again.");
+                // If the response is not OK, show an alert with the error message
+                // const data = await response.json();
+                const errorData = await response.json();
+                const errorMessage = errorData.message || "Failed to sign up. Please try again.";
+                alert(errorMessage);
+                window.location.href = "../signup"
+                resetFormFields();
             }
         } catch (error) {
             console.error("Error submitting form:", error);
             alert("An unexpected error occurred. Please try again.");
+            window.location.href = "../signup"
+            resetFormFields();
         }
     });
+    function resetFormFields() {
+        // Reset form fields
+        document.getElementById("fullname").value = "";
+        document.getElementById("email").value = "";
+        document.getElementById("password").value = "";
+        document.getElementById("role").value = "";
+
+        // Reset error message
+        errorMessageDiv.textContent = "";
+    }
 });
