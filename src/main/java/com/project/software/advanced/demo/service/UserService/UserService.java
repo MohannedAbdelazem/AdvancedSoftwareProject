@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +22,14 @@ public class UserService implements UserServiceInt {
 
 	@Override
 	public User getUserById(int userID) {
-		Optional<User> user = userRepository.findById(userID);
-		if (user.isPresent()) {
-			return user.get();
-		}
-		return null;
+		return userRepository.findById(userID)
+				.orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + userID));
+	}
+
+	@Override
+	public User getUserByEmail(String email) {
+		return userRepository.findByEmail(email)
+				.orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 	}
 
 	@Override
@@ -34,7 +38,7 @@ public class UserService implements UserServiceInt {
 			throw new IllegalArgumentException("Password must be at least 8 characters long");
 		}
 		String passHash = passwordEncoder.encode(user.getPassword());
-		
+
 		user.setPassword(passHash);
 		return userRepository.save(user);
 	};

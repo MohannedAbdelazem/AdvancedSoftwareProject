@@ -28,31 +28,31 @@ import com.project.software.advanced.demo.service.CourseListService.CourseListSe
 @RestController
 @RequestMapping("/api")
 public class CourseListController {
-    @Autowired CourseListService courseListService;
-    @GetMapping("/courseLists")
-    public ResponseEntity<List<CourseList>> getCourseList(){
-        List<CourseList> CourseL = courseListService.fetchCourseList();
-        return ResponseEntity.ok(CourseL);
-    }
-    @PostMapping("/courseLists")
-    public ResponseEntity<String> postCourseLists(@RequestBody CourseList cl){
-        if(cl == null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: Questions data is null");
+	@Autowired
+	CourseListService courseListService;
 
-        }
-        CourseList savedCourseList = courseListService.saveCourseList(cl);
-        if (savedCourseList == null) {
+	@GetMapping("/courseLists")
+	public ResponseEntity<List<CourseList>> getCourseList() {
+		List<CourseList> CourseL = courseListService.fetchCourseList();
+		return ResponseEntity.ok(CourseL);
+	}
+
+	@PostMapping("/courseLists")
+	public ResponseEntity<String> postCourseLists(@RequestBody CourseList cl) {
+		if (cl == null) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: Questions data is null");
+
+		}
+		CourseList savedCourseList = courseListService.saveCourseList(cl);
+		if (savedCourseList == null) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error:");
 		}
-        return ResponseEntity.status(HttpStatus.CREATED).body("CourseList created");
-    }
+		return ResponseEntity.status(HttpStatus.CREATED).body("CourseList created");
+	}
 
-    @DeleteMapping("/deleteCourseList/{id}")
-    public String deleteCourseListByID(@PathVariable("id")int  courseListID){
-        courseListService.deleteCourseList(courseListID);
-        return "Course Deleted successfully";
-    }
-    // public 
+	@DeleteMapping("/deleteCourseList/{id}")
+	public String deleteCourseListByID(@PathVariable("id") int courseListID) {
+		courseListService.deleteCourseList(courseListID);
+		return "Course Deleted successfully";
+	}
 }
-
-// open mic

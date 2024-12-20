@@ -27,26 +27,26 @@ import com.project.software.advanced.demo.service.QuizService.QuizService;
 @RestController
 @RequestMapping("/api/quiz")
 public class QuizController {
-    private QuizService service;
+	private QuizService service;
 
 	@Autowired
 	public QuizController(QuizService service) {
 		this.service = service;
 	}
 
-	@GetMapping("/")
-	public ResponseEntity<List<Quiz>> getQuizs() {
-		List<Quiz> Quizs = service.fetchQuizzes();
-		return ResponseEntity.ok(Quizs);
+	@GetMapping("")
+	public ResponseEntity<List<Quiz>> getQuizzes() {
+		List<Quiz> Quizzes = service.fetchQuizzes();
+		return ResponseEntity.ok(Quizzes);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<String> getQuizById(@PathVariable("id") int QuizID) {
+	public ResponseEntity<?> getQuizById(@PathVariable("id") int QuizID) {
 		Quiz Quiz = service.getQuizById(QuizID);
 		if (Quiz == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: Quiz not found");
 		}
-		return ResponseEntity.ok("Quiz: " + Quiz.toString());
+		return ResponseEntity.ok(Quiz);
 	}
 
 	@PostMapping("/instructor")

@@ -30,7 +30,7 @@ public class SecurityConfig {
 				.disable()
 				.headers().frameOptions().sameOrigin().and()
 				.authorizeRequests()
-				.requestMatchers("/api/auth/**", "/h2-console/**").permitAll()
+				.requestMatchers("/api/auth/**", "/h2-console/**","/**").permitAll()
 				.anyRequest()
 				.authenticated()
 				.and()

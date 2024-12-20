@@ -11,34 +11,60 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.project.software.advanced.demo.Util.AuthUsername;
 import com.project.software.advanced.demo.model.Course.Course;
+import com.project.software.advanced.demo.model.User.User;
 import com.project.software.advanced.demo.service.CourseService.CourseService;
+import com.project.software.advanced.demo.service.UserService.UserService;
+
 
 @RestController
 @RequestMapping("/api/course")
 public class CourseController {
-	private CourseService service;
+	private CourseService courseService;
+	private UserService userService;
 
 	@Autowired
-	public CourseController(CourseService service) {
-		this.service = service;
+	public CourseController(CourseService service, UserService userService) {
+		this.courseService = service;
+		this.userService = userService;
 	}
 
 	@GetMapping("")
 	public ResponseEntity<List<Course>> getCourses() {
-
-		System.out.println("test");
-		List<Course> courses = service.fetchCourses();
+		List<Course> courses = courseService.fetchCourses();
 		return ResponseEntity.ok(courses);
 	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<String> getCourseById(@PathVariable("id") int courseID) {
-		Course course = service.getCourseById(courseID);
+		Course course = courseService.getCourseById(courseID);
 		if (course == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: Course not found");
 		}
 		return ResponseEntity.ok("Course: " + course.toString());
+	}
+
+	@PostMapping("/{id}/enroll")
+	public ResponseEntity<?> enrollCourse(@PathVariable("id") int courseID) {
+		Course course = courseService.getCourseById(courseID);
+		if (course == null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: Course not found");
+		}
+
+		String username = AuthUsername.getAuthUsername();
+
+		if (username == null) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Error: Wrong Authentication");
+		}
+
+		User user = userService.getUserByEmail(username);
+
+		courseService.enrollStudentInCourse(user.getUserID(), courseID);
+
+		return ResponseEntity.ok("Course Registered");
+
 	}
 
 	@PostMapping("/instructor")
@@ -47,7 +73,7 @@ public class CourseController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: Course data is null");
 		}
 		System.out.println(course.toString());
-		Course savedCourse = service.saveCourse(course);
+		Course savedCourse = courseService.saveCourse(course);
 		if (savedCourse == null) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error:");
 		}

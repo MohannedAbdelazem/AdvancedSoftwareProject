@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import com.project.software.advanced.demo.Util.JwtUtil;
 import com.project.software.advanced.demo.model.Auth.AuthResponse;
@@ -49,11 +50,12 @@ public class AuthService implements AuthServiceInt {
 	@Override
 	public AuthResponse login(LoginRequest loginRequest) {
 
-		System.out.println("test before: " + loginRequest.getEmail() + " " + loginRequest.getPassword());
+		// System.out.println("test before: " + loginRequest.getEmail() + " " +
+		// loginRequest.getPassword());
 		authManager
 				.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
-		System.out.println("test after");
+		// System.out.println("test after");
 
 		User xdd = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow();
 

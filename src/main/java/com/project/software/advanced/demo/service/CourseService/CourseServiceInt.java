@@ -16,4 +16,6 @@ public interface CourseServiceInt {
 	Course updateCourse(Course course, int courseID);
 
 	void deleteCourse(int courseID);
+
+	void enrollStudentInCourse(int studentID, int courseID);
 }

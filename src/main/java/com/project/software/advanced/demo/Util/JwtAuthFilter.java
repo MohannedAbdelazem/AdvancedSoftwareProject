@@ -45,18 +45,19 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 					String role = jwtUtil.extractRole(token);
 					String requestURI = request.getRequestURI();
 					logger.info("Request URI: {}, Email: {}", requestURI, email);
-					// if (role.contains("STUDENT")) {
-					// if (requestURI.contains("instructor") || requestURI.contains("admin")) {
-					// response.setStatus(HttpStatus.FORBIDDEN.value());
-					// response.getWriter().write("Error: Forbidden action for student");
-					// return;
-					// }
-					// }
-					// if (role.contains("INSTRUCTOR") && requestURI.contains("admin")) {
-					// response.setStatus(HttpStatus.FORBIDDEN.value());
-					// response.getWriter().write("Error: Forbiddenxd");
-					// return;
-					// }
+
+					if (role.contains("STUDENT")) {
+						if (requestURI.contains("instructor") || requestURI.contains("admin")) {
+							response.setStatus(HttpStatus.FORBIDDEN.value());
+							response.getWriter().write("Error: Forbidden action for student");
+							return;
+						}
+					}
+					if (role.contains("INSTRUCTOR") && requestURI.contains("admin")) {
+						response.setStatus(HttpStatus.FORBIDDEN.value());
+						response.getWriter().write("Error: Forbiddenxd");
+						return;
+					}
 
 					UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
 					var authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

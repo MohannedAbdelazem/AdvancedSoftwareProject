@@ -1,4 +1,3 @@
-
 package com.project.software.advanced.demo.service.CourseService;
 
 import java.util.ArrayList;
@@ -8,13 +7,22 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.project.software.advanced.demo.model.Assignment.Assignment;
+import com.project.software.advanced.demo.model.Assignment.AssignmentRepository;
 import com.project.software.advanced.demo.model.Course.Course;
 import com.project.software.advanced.demo.model.Course.CourseRepository;
+import com.project.software.advanced.demo.model.User.User;
+import com.project.software.advanced.demo.model.User.UserRepository;
 
 @Service
 public class CourseService implements CourseServiceInt {
 	@Autowired
 	private CourseRepository courseRepository;
+	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
+	private AssignmentRepository assignmentRepository;
 
 	@Override
 	public Course getCourseById(int courseID) {
@@ -60,5 +68,25 @@ public class CourseService implements CourseServiceInt {
 		existingCourses.forEach(courseList::add);
 
 		return courseList;
+	}
+
+	public void enrollStudentInCourse(int studentId, int courseId) {
+		User student = userRepository.findById(studentId).orElseThrow();
+		Course course = courseRepository.findById(courseId).orElseThrow();
+
+		student.getCourses().add(course);
+		course.getStudents().add(student);
+
+		userRepository.save(student);
+		courseRepository.save(course);
+	}
+
+	public void addAssignmentToCourse(int courseId, Assignment assignment) {
+		Course course = courseRepository.findById(courseId).orElseThrow(() -> new RuntimeException("Course not found"));
+		assignment.setCourse(course);
+		course.addAssignment(assignment);
+		assignmentRepository.save(assignment);
+		courseRepository.save(course);
+		return;
 	}
 }

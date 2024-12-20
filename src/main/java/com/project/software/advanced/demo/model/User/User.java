@@ -6,11 +6,15 @@
 package com.project.software.advanced.demo.model.User;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.project.software.advanced.demo.model.Course.Course;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,19 +22,14 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import lombok.Builder;
-import lombok.Data;
 
 /**
  *
  * @author Mohanned
  */
 
-@Data
-@Builder
-// @NoArgsConstructor
-// @AllArgsConstructor
 @Entity
 @Table(name = "app_user")
 public class User implements UserDetails {
@@ -47,6 +46,9 @@ public class User implements UserDetails {
 
 	@Enumerated(EnumType.STRING)
 	private Role role;
+
+	@ManyToMany(mappedBy = "students")
+	private Set<Course> courses = new HashSet<>();
 
 	private int CourseListID;
 
@@ -71,6 +73,18 @@ public class User implements UserDetails {
 
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return List.of(new SimpleGrantedAuthority(role.name()));
+	}
+
+	public int getUserID() {
+		return userID;
+	}
+
+	public Set<Course> getCourses() {
+		return courses;
+	}
+
+	public void setCourses(Set<Course> courses) {
+		this.courses = courses;
 	}
 
 	public int getCourseListID() {
