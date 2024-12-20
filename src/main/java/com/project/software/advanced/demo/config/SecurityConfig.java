@@ -13,16 +13,12 @@ import com.project.software.advanced.demo.Util.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
-// @EnableWebSecurity
+@EnableWebSecurity
 @RequiredArgsConstructor
-// @EnableMethodSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
 	private final JwtAuthFilter jwtAuthFilter;
-
-	public SecurityConfig(JwtAuthFilter jwtAuthenticationFilter) {
-		this.jwtAuthFilter = jwtAuthenticationFilter;
-	}
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -30,7 +26,7 @@ public class SecurityConfig {
 				.disable()
 				.headers().frameOptions().sameOrigin().and()
 				.authorizeRequests()
-				.requestMatchers("/auth/**", "/h2-console/**")
+				.requestMatchers("/api/auth/**", "/h2-console/**", "**")
 				.permitAll()
 				.anyRequest()
 				.authenticated()
@@ -40,10 +36,4 @@ public class SecurityConfig {
 		return http.build();
 	}
 
-	// @Bean
-	// public AuthenticationManager
-	// authenticationManager(AuthenticationConfiguration configuration) throws
-	// Exception {
-	// return configuration.getAuthenticationManager();
-	// }
 }

@@ -16,4 +16,5 @@ public interface QuestionsServiceInt {
     List<Questions> fetchQuestionList();
     Questions updateQuestion(Questions question, int QuestionID);
     void deleteQuestion(int QuestionID);
+    public Questions getQuestionById(int QuestionID);
 }

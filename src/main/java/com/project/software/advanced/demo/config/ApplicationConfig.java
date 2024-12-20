@@ -1,6 +1,5 @@
 package com.project.software.advanced.demo.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,11 +20,6 @@ import lombok.RequiredArgsConstructor;
 public class ApplicationConfig {
 
 	private final UserRepository repository;
-
-	@Autowired
-	public ApplicationConfig(UserRepository repository) {
-		this.repository = repository;
-	}
 
 	@Bean
 	public UserDetailsService userDetailsService() {

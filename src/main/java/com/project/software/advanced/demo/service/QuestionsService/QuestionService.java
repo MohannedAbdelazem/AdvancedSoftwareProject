@@ -6,6 +6,7 @@
 package com.project.software.advanced.demo.service.QuestionsService;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,15 @@ public class QuestionService implements  QuestionsServiceInt{
     @Override
     public List<Questions> fetchQuestionList(){
         return (List<Questions>)questionsRepository.findAll();
+    }
+    @Override
+    public Questions getQuestionById(int QuestionID){
+        Optional<Questions> questions = questionsRepository.findById(QuestionID);
+		if (questions.isPresent()) {
+			return questions.get();
+		}
+		return null;
+
     }
     
     @Override

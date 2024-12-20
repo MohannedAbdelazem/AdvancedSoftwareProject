@@ -42,7 +42,14 @@ public class QuizService implements QuizServiceInt {
 		}
 		quizRepository.deleteById(quizID);
 	}
-
+	@Override
+	public Quiz getQuizById(int QuizID) {
+		Optional<Quiz> quiz = quizRepository.findById(QuizID);
+		if (quiz.isPresent()) {
+			return quiz.get();
+		}
+		return null;
+	}
 	@Override
 	public List<Quiz> fetchQuizzes() {
 		Iterable<Quiz> existingQuizs = quizRepository.findAll();

@@ -13,4 +13,6 @@ public interface QuizServiceInt {
 	Quiz updateQuiz(Quiz quiz, int quizID);
 
 	void deleteQuiz(int quizID);
+	
+	public Quiz getQuizById(int QuizID);
 }

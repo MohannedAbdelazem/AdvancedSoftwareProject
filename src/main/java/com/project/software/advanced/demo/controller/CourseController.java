@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +16,7 @@ import com.project.software.advanced.demo.model.Course.Course;
 import com.project.software.advanced.demo.service.CourseService.CourseService;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/course")
 public class CourseController {
 	private CourseService service;
 
@@ -26,13 +25,13 @@ public class CourseController {
 		this.service = service;
 	}
 
-	@GetMapping("/course")
+	@GetMapping("/")
 	public ResponseEntity<List<Course>> getCourses() {
 		List<Course> courses = service.fetchCourses();
 		return ResponseEntity.ok(courses);
 	}
 
-	@GetMapping("/course/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<String> getCourseById(@PathVariable("id") int courseID) {
 		Course course = service.getCourseById(courseID);
 		if (course == null) {
@@ -41,8 +40,9 @@ public class CourseController {
 		return ResponseEntity.ok("Course: " + course.toString());
 	}
 
-	@PostMapping("/course")
-	@PreAuthorize("hasRole('ADMIN')")
+
+	@PostMapping("/instructor")
+	// @PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<String> postCourse(@RequestBody Course course) {
 		if (course == null) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: Course data is null");

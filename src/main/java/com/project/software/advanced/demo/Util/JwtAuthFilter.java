@@ -1,5 +1,8 @@
 package com.project.software.advanced.demo.Util;
 
+import java.io.IOException;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,8 +16,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.io.IOException;
-
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
@@ -26,7 +27,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 		this.jwtUtil = jwtUtil;
 		this.userDetailsService = userDetailsService;
 	}
-
 
 	// Middleware
 	@Override
@@ -42,6 +42,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 			if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 				if (jwtUtil.validateToken(token, email)) {
 					String role = jwtUtil.extractRole(token);
+            		String requestURI = request.getRequestURI();
+					
+					if(role.startsWith("USER")){
+						// Instructor / Admin endpoints instead of placeholder
+      					if (requestURI.startsWith("/api/placeholder")) {
+                			response.setStatus(HttpStatus.FORBIDDEN.value());
+                			response.getWriter().write("Error: Forbidden");
+                			return;
+            			}
+					}
+
 
 					UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
 					var authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

@@ -5,8 +5,8 @@
 
 package com.project.software.advanced.demo.model.User;
 
-import java.util.List;
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -66,9 +66,6 @@ public class User implements UserDetails {
 		this.password = password;
 		this.CourseListID = CourseListID;
 		this.role = role;
-	}
-
-	public User() {
 	}
 
 	public Collection<? extends GrantedAuthority> getAuthorities() {
