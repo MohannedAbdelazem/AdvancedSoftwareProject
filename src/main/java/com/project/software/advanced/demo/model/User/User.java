@@ -19,10 +19,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  *
@@ -31,8 +29,8 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+// @NoArgsConstructor
+// @AllArgsConstructor
 @Entity
 @Table(name = "app_user")
 public class User implements UserDetails {
@@ -58,6 +56,9 @@ public class User implements UserDetails {
 		this.password = password;
 		this.CourseListID = CourseListID;
 		this.role = Role.valueOf(role.toUpperCase());
+	}
+
+	public User() {
 	}
 
 	public User(String name, String email, String password, Role role, int CourseListID) {

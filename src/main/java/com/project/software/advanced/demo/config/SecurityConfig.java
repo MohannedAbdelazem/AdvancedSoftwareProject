@@ -20,14 +20,17 @@ public class SecurityConfig {
 
 	private final JwtAuthFilter jwtAuthFilter;
 
+	public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
+		this.jwtAuthFilter = jwtAuthFilter;
+	}
+
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf()
 				.disable()
 				.headers().frameOptions().sameOrigin().and()
 				.authorizeRequests()
-				.requestMatchers("/api/auth/**", "/h2-console/**", "**")
-				.permitAll()
+				.requestMatchers("/api/auth/**", "/h2-console/**").permitAll()
 				.anyRequest()
 				.authenticated()
 				.and()

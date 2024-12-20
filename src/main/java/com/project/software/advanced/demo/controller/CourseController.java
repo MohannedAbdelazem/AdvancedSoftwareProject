@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.project.software.advanced.demo.model.Course.Course;
 import com.project.software.advanced.demo.service.CourseService.CourseService;
 
@@ -25,8 +24,10 @@ public class CourseController {
 		this.service = service;
 	}
 
-	@GetMapping("/")
+	@GetMapping("")
 	public ResponseEntity<List<Course>> getCourses() {
+
+		System.out.println("test");
 		List<Course> courses = service.fetchCourses();
 		return ResponseEntity.ok(courses);
 	}
@@ -40,17 +41,16 @@ public class CourseController {
 		return ResponseEntity.ok("Course: " + course.toString());
 	}
 
-
 	@PostMapping("/instructor")
-	// @PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<String> postCourse(@RequestBody Course course) {
+	public ResponseEntity<?> postCourse(@RequestBody Course course) {
 		if (course == null) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: Course data is null");
 		}
+		System.out.println(course.toString());
 		Course savedCourse = service.saveCourse(course);
 		if (savedCourse == null) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error:");
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body("Course created: " + savedCourse.toString());
+		return ResponseEntity.status(HttpStatus.CREATED).body(course);
 	}
 }

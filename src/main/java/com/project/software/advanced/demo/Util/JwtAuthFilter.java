@@ -2,6 +2,8 @@ package com.project.software.advanced.demo.Util;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,7 +20,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
-
+	private static final Logger logger = LoggerFactory.getLogger(JwtAuthFilter.class);
 	private final JwtUtil jwtUtil;
 
 	private final UserDetailsService userDetailsService;
@@ -36,23 +38,25 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
 		if (authHeader != null && authHeader.startsWith("Bearer ")) {
 			String token = authHeader.substring(7);
-			System.out.println("asddasasdadsdsa");
 			String email = jwtUtil.extractUsername(token);
 
 			if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 				if (jwtUtil.validateToken(token, email)) {
 					String role = jwtUtil.extractRole(token);
-            		String requestURI = request.getRequestURI();
-					
-					if(role.startsWith("USER")){
-						// Instructor / Admin endpoints instead of placeholder
-      					if (requestURI.startsWith("/api/placeholder")) {
-                			response.setStatus(HttpStatus.FORBIDDEN.value());
-                			response.getWriter().write("Error: Forbidden");
-                			return;
-            			}
-					}
-
+					String requestURI = request.getRequestURI();
+					logger.info("Request URI: {}, Email: {}", requestURI, email);
+					// if (role.contains("STUDENT")) {
+					// if (requestURI.contains("instructor") || requestURI.contains("admin")) {
+					// response.setStatus(HttpStatus.FORBIDDEN.value());
+					// response.getWriter().write("Error: Forbidden action for student");
+					// return;
+					// }
+					// }
+					// if (role.contains("INSTRUCTOR") && requestURI.contains("admin")) {
+					// response.setStatus(HttpStatus.FORBIDDEN.value());
+					// response.getWriter().write("Error: Forbiddenxd");
+					// return;
+					// }
 
 					UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
 					var authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

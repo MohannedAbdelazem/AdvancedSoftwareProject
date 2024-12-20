@@ -1,7 +1,4 @@
 {
-	"name": "Saif Al-Din",
-	"email": "testnew2@mail.me",
-	"password": "12345678",
-	"role": "USER",
-	"CourseListID": "1"
+	"email": "testinstruct@mail.me",
+	"password": "12345678"
 }

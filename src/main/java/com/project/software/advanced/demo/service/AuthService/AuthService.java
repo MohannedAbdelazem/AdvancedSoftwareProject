@@ -49,8 +49,11 @@ public class AuthService implements AuthServiceInt {
 	@Override
 	public AuthResponse login(LoginRequest loginRequest) {
 
+		System.out.println("test before: " + loginRequest.getEmail() + " " + loginRequest.getPassword());
 		authManager
 				.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+
+		System.out.println("test after");
 
 		User xdd = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow();
 

@@ -17,7 +17,7 @@ import com.project.software.advanced.demo.model.User.User;
 import com.project.software.advanced.demo.service.UserService.UserService;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 public class UserController {
 	private final UserService service;
 
@@ -26,13 +26,13 @@ public class UserController {
 		this.service = service;
 	}
 
-	@GetMapping("/user")
+	@GetMapping("")
 	public ResponseEntity<List<User>> getUsers() {
 		List<User> users = service.fetchUsers();
 		return ResponseEntity.ok(users);
 	}
 
-	@GetMapping("/user/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<?> getUserById(@PathVariable("id") int userID) {
 		User user = service.getUserById(userID);
 		if (user == null) {

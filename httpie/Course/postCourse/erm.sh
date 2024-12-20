@@ -1,3 +1,5 @@
 #!/bin/sh
 
-http -A bearer -a "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJzdWIiOiJ0ZXNzdEBtYWlsLm1lIiwiaWF0IjoxNzM0NTQ3ODQ5LCJleHAiOjE3MzQ1ODM4NDl9.Z7lgDcCPF375yoz9LVpDGdswpgyaB49_PlBQa63guac" POST http://localhost:8080/api/course @body.json
+token=$1
+
+http -A bearer -a "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiSU5TVFJVQ1RPUiIsInN1YiI6InRlc3RpbnN0cnVjdEBtYWlsLm1lIiwiaWF0IjoxNzM0Njg3NjYyLCJleHAiOjE3MzQ3MjM2NjJ9.cLFQ_umXEEmqPYvCyTFYRid4i3kNHsbRQpvdyvGP6_0" POST http://localhost:8080/api/course/instructor @body.json

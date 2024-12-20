@@ -1,7 +1,7 @@
 package com.project.software.advanced.demo.model.User;
 
 public enum Role {
-	USER,
-
+	STUDENT,
+	INSTRUCTOR,
 	ADMIN
 }

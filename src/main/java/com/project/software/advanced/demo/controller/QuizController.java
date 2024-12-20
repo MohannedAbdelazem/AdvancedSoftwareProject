@@ -25,7 +25,7 @@ import com.project.software.advanced.demo.service.QuizService.QuizService;
  * @author Mohanned
  */
 @RestController
-@RequestMapping("api/quiz")
+@RequestMapping("/api/quiz")
 public class QuizController {
     private QuizService service;
 
