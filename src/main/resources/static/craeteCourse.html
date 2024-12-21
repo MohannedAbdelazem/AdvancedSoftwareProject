@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Course</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        label {
+            margin-top: 10px;
+            display: block;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .file-preview {
+            margin-top: 10px;
+        }
+
+        .file-item {
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .delete-btn {
+            background: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background: darkred;
+        }
+
+        .lesson-count {
+            margin-top: 15px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Create a New Course</h1>
+
+    <!-- Course Creation Form -->
+    <form id="create-course-form" enctype="multipart/form-data" method="POST">
+        <!-- Course Details Section -->
+        <label for="course-name">Course Name</label>
+        <input type="text" id="course-name" name="course-name" required>
+
+        <label for="course-description">Course Description</label>
+        <textarea id="course-description" name="course-description" rows="4" required></textarea>
+
+        <label for="course-duration">Course Duration (e.g., 10 weeks)</label>
+        <input type="text" id="course-duration" name="course-duration" required>
+
+        <!-- File Upload Section (Lesson Files) -->
+        <label for="lesson-files">Upload Lesson Files</label>
+        <input type="file" id="lesson-files" name="lesson-files" multiple required>
+
+        <!-- Preview uploaded files -->
+        <div id="file-preview" class="file-preview"></div>
+
+        <!-- Display the lesson count -->
+        <div id="lesson-count" class="lesson-count">Lesson Count: 0</div>
+
+        <button type="submit">Create Course</button>
+    </form>
+</div>
+
+<script>
+    const lessonFilesInput = document.getElementById('lesson-files');
+    const filePreview = document.getElementById('file-preview');
+    const lessonCountDisplay = document.getElementById('lesson-count');
+    let selectedFiles = [];
+
+    // Listen for file selection and update the file preview
+    lessonFilesInput.addEventListener('change', function(event) {
+        const files = event.target.files;
+
+        // Loop through the selected files and append them to the selectedFiles array
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            // Prevent adding the same file more than once (based on the name)
+            if (!selectedFiles.some(f => f.name === file.name)) {
+                selectedFiles.push(file);
+            }
+        }
+
+        // Update the preview and lesson count
+        updateFilePreview();
+    });
+
+    // Function to update the file preview and lesson count
+    function updateFilePreview() {
+        // Clear the current preview
+        filePreview.innerHTML = '';
+
+        // Loop through the selected files and create preview elements
+        selectedFiles.forEach((file, index) => {
+            const fileItem = document.createElement('div');
+            fileItem.classList.add('file-item');
+            
+            const fileName = document.createElement('span');
+            fileName.textContent = file.name;
+            
+            const deleteButton = document.createElement('button');
+            deleteButton.classList.add('delete-btn');
+            deleteButton.textContent = 'X';
+            deleteButton.addEventListener('click', function() {
+                // Remove the file from the selected files array and update the preview
+                selectedFiles.splice(index, 1);
+                updateFilePreview(); // Re-render the file preview
+            });
+
+            fileItem.appendChild(fileName);
+            fileItem.appendChild(deleteButton);
+            filePreview.appendChild(fileItem);
+        });
+
+        // Update the lesson count based on the number of selected files
+        lessonCountDisplay.textContent = `Lesson Count: ${selectedFiles.length}`;
+    }
+
+    // Handle form submission
+    document.getElementById("create-course-form").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent the form from submitting normally
+
+        // Create a FormData object from the form
+        const formData = new FormData(this);
+
+        // Append the selected files to the FormData object
+        selectedFiles.forEach(file => {
+            formData.append('lesson-files', file);
+        });
+
+        // Get the JWT token from localStorage (Assuming the token is stored after login)
+        const token = localStorage.getItem('auth-token'); 
+
+        // Send the form data via POST to the backend API with the JWT token in the Authorization header
+        fetch('/api/course/create', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: formData,
+        })
+        .then(response => {
+            // Check if the response is okay (status 2xx)
+            if (!response.ok) {
+                return response.text().then(text => { throw new Error(text); });
+            }
+            return response.text(); // The backend response is plain text
+        })
+        .then(data => {
+            alert("Course created successfully: " + data); // Alert success message from the backend
+            // Optionally, reset the form or redirect to another page
+            document.getElementById("create-course-form").reset();
+            selectedFiles = []; // Reset selected files array
+            filePreview.innerHTML = ''; // Clear the file preview after form submission
+            lessonCountDisplay.textContent = "Lesson Count: 0"; // Reset lesson count display
+        })
+        .catch(error => {
+            alert("Error: " + error.message); // Handle errors (e.g., network issues, backend errors)
+        });
+    });
+</script>
+
+</body>
+</html>

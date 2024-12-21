@@ -18,65 +18,66 @@ import com.project.software.advanced.demo.model.User.User;
 import com.project.software.advanced.demo.service.CourseService.CourseService;
 import com.project.software.advanced.demo.service.UserService.UserService;
 
-
 @RestController
 @RequestMapping("/api/course")
 public class CourseController {
-	private CourseService courseService;
-	private UserService userService;
 
-	@Autowired
-	public CourseController(CourseService service, UserService userService) {
-		this.courseService = service;
-		this.userService = userService;
-	}
+    private CourseService courseService;
+    private UserService userService;
 
-	@GetMapping("")
-	public ResponseEntity<List<Course>> getCourses() {
-		List<Course> courses = courseService.fetchCourses();
-		return ResponseEntity.ok(courses);
-	}
+    @Autowired
+    public CourseController(CourseService service, UserService userService) {
+        this.courseService = service;
+        this.userService = userService;
+    }
 
-	@GetMapping("/{id}")
-	public ResponseEntity<String> getCourseById(@PathVariable("id") int courseID) {
-		Course course = courseService.getCourseById(courseID);
-		if (course == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: Course not found");
-		}
-		return ResponseEntity.ok("Course: " + course.toString());
-	}
+    @GetMapping("")
+    public ResponseEntity<List<Course>> getCourses() {
+        List<Course> courses = courseService.fetchCourses();
+        return ResponseEntity.ok(courses);
+    }
 
-	@PostMapping("/{id}/enroll")
-	public ResponseEntity<?> enrollCourse(@PathVariable("id") int courseID) {
-		Course course = courseService.getCourseById(courseID);
-		if (course == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: Course not found");
-		}
+    @GetMapping("/{id}")
+    public ResponseEntity<String> getCourseById(@PathVariable("id") int courseID) {
+        Course course = courseService.getCourseById(courseID);
+        if (course == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: Course not found");
+        }
+        return ResponseEntity.ok("Course: " + course.toString());
+    }
 
-		String username = AuthUsername.getAuthUsername();
+    @PostMapping("/{id}/enroll")
+    public ResponseEntity<?> enrollCourse(@PathVariable("id") int courseID) {
+        Course course = courseService.getCourseById(courseID);
+        if (course == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: Course not found");
+        }
 
-		if (username == null) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Error: Wrong Authentication");
-		}
+        String username = AuthUsername.getAuthUsername();
 
-		User user = userService.getUserByEmail(username);
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Error: Wrong Authentication");
+        }
 
-		courseService.enrollStudentInCourse(user.getUserID(), courseID);
+        User user = userService.getUserByEmail(username);
 
-		return ResponseEntity.ok("Course Registered");
+        courseService.enrollStudentInCourse(user.getUserID(), courseID);
 
-	}
+        return ResponseEntity.ok("Course Registered");
 
-	@PostMapping("/instructor")
-	public ResponseEntity<?> postCourse(@RequestBody Course course) {
-		if (course == null) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: Course data is null");
-		}
-		System.out.println(course.toString());
-		Course savedCourse = courseService.saveCourse(course);
-		if (savedCourse == null) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error:");
-		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(course);
-	}
+    }
+
+    @PostMapping("/instructor")
+    public ResponseEntity<?> postCourse(@RequestBody Course course) {
+        if (course == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: Course data is null");
+        }
+        System.out.println(course.toString());
+        Course savedCourse = courseService.saveCourse(course);
+        if (savedCourse == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error:");
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(course);
+    }
+
 }

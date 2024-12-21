@@ -518,3 +518,6 @@ Caused by: org.h2.jdbc.JdbcSQLInvalidAuthorizationSpecException: Wrong user name
 	at org.h2.message.DbException.getJdbcSQLException(DbException.java:522)
 	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
 	... 98 more
+2024-12-21 01:35:38.107064+02:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]QUIZ_LIST QUIZ_LIST"; SQL statement:
+QUIZ_LIST QUIZ_LIST [42000-232]

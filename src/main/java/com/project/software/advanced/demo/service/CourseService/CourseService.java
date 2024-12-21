@@ -11,82 +11,99 @@ import com.project.software.advanced.demo.model.Assignment.Assignment;
 import com.project.software.advanced.demo.model.Assignment.AssignmentRepository;
 import com.project.software.advanced.demo.model.Course.Course;
 import com.project.software.advanced.demo.model.Course.CourseRepository;
+import com.project.software.advanced.demo.model.Lesson.Lesson;
+import com.project.software.advanced.demo.model.Lesson.LessonRepository;
 import com.project.software.advanced.demo.model.User.User;
 import com.project.software.advanced.demo.model.User.UserRepository;
 
 @Service
 public class CourseService implements CourseServiceInt {
-	@Autowired
-	private CourseRepository courseRepository;
-	@Autowired
-	private UserRepository userRepository;
 
-	@Autowired
-	private AssignmentRepository assignmentRepository;
+    @Autowired
+    private CourseRepository courseRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private LessonRepository lessonRepository;
+    @Autowired
+    private AssignmentRepository assignmentRepository;
 
-	@Override
-	public Course getCourseById(int courseID) {
-		Optional<Course> course = courseRepository.findById(courseID);
-		if (course.isPresent()) {
-			return course.get();
-		}
-		return null;
-	}
+    @Override
+    public Course getCourseById(int courseID) {
+        Optional<Course> course = courseRepository.findById(courseID);
+        if (course.isPresent()) {
+            return course.get();
+        }
+        return null;
+    }
 
-	@Override
-	public Course saveCourse(Course course) {
-		return courseRepository.save(course);
-	};
+    @Override
+    public Course saveCourse(Course course) {
+        return courseRepository.save(course);
+    }
 
-	@Override
-	public Course updateCourse(Course course, int courseID) {
-		Optional<Course> existingCourseOptional = courseRepository.findById(courseID);
-		if (!existingCourseOptional.isPresent()) {
-			return null;
-		}
-		Course existingCourse = existingCourseOptional.get();
-		existingCourse.setCourseName(course.getCourseName());
-		existingCourse.setQuizListID(course.getQuizListID());
-		existingCourse.setCourseInstructorID(course.getCourseInstructorID());
-		return courseRepository.save(existingCourse);
-	}
+    ;
 
 	@Override
-	public void deleteCourse(int courseID) {
-		Optional<Course> existingCourse = courseRepository.findById(courseID);
-		if (!existingCourse.isPresent()) {
-			return;
-		}
-		courseRepository.deleteById(courseID);
-	}
+    public Course updateCourse(Course course, int courseID) {
+        Optional<Course> existingCourseOptional = courseRepository.findById(courseID);
+        if (!existingCourseOptional.isPresent()) {
+            return null;
+        }
+        Course existingCourse = existingCourseOptional.get();
+        existingCourse.setCourseName(course.getCourseName());
+        existingCourse.setQuizListID(course.getQuizListID());
+        existingCourse.setCourseInstructorID(course.getCourseInstructorID());
+        return courseRepository.save(existingCourse);
+    }
 
-	@Override
-	public List<Course> fetchCourses() {
-		Iterable<Course> existingCourses = courseRepository.findAll();
+    @Override
+    public void deleteCourse(int courseID) {
+        Optional<Course> existingCourse = courseRepository.findById(courseID);
+        if (!existingCourse.isPresent()) {
+            return;
+        }
+        courseRepository.deleteById(courseID);
+    }
 
-		List<Course> courseList = new ArrayList<>();
-		existingCourses.forEach(courseList::add);
+    @Override
+    public List<Course> fetchCourses() {
+        Iterable<Course> existingCourses = courseRepository.findAll();
 
-		return courseList;
-	}
+        List<Course> courseList = new ArrayList<>();
+        existingCourses.forEach(courseList::add);
 
-	public void enrollStudentInCourse(int studentId, int courseId) {
-		User student = userRepository.findById(studentId).orElseThrow();
-		Course course = courseRepository.findById(courseId).orElseThrow();
+        return courseList;
+    }
 
-		student.getCourses().add(course);
-		course.getStudents().add(student);
+    public void enrollStudentInCourse(int studentId, int courseId) {
+        User student = userRepository.findById(studentId).orElseThrow();
+        Course course = courseRepository.findById(courseId).orElseThrow();
 
-		userRepository.save(student);
-		courseRepository.save(course);
-	}
+        student.getCourses().add(course);
+        course.getStudents().add(student);
 
-	public void addAssignmentToCourse(int courseId, Assignment assignment) {
-		Course course = courseRepository.findById(courseId).orElseThrow(() -> new RuntimeException("Course not found"));
-		assignment.setCourse(course);
-		course.addAssignment(assignment);
-		assignmentRepository.save(assignment);
-		courseRepository.save(course);
-		return;
-	}
+        userRepository.save(student);
+        courseRepository.save(course);
+    }
+
+    public void addAssignmentToCourse(int courseId, Assignment assignment) {
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new RuntimeException("Course not found"));
+        assignment.setCourse(course);
+        course.addAssignment(assignment);
+        assignmentRepository.save(assignment);
+        courseRepository.save(course);
+        return;
+    }
+
+    public void addLessonToCourse(int courseId, Lesson lesson) {
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new RuntimeException("Course not found"));
+        lesson.setCourse(course);
+        lessonRepository.save(lesson);
+    }
+
+    public List<Lesson> getLessonsByCourseId(int courseId) {
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new RuntimeException("Course not found"));
+        return course.getLessonFiles();
+    }
 }
